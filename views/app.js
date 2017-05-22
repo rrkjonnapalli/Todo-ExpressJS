@@ -18,7 +18,6 @@ var insertDocument = function(db, cb){
 	}, function(err, res){
 		assert.equal(err, null);
 		console.log('User added');
-		cb();
 	});
 };
 
@@ -34,6 +33,7 @@ app.post('/person', urlencodedParser ,function(req, res){
 	MongoClient.connect(url, function(err, db) {
 	  assert.equal(null, err);
 	  insertDocument(db, function() {
+		  res.send('user added');
 		  db.close();
 	  });
 	});
