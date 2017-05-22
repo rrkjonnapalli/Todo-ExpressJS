@@ -1,31 +1,51 @@
-
 var express = require('express');
-var mongoose = require('mongoose');
+var app = express();
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+var ObjectId = require('mongodb').ObjectID;
+
+var url = 'mongodb://localhost:27017/test';
+
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({extended:false});
-
-
-var app = express();
-
 app.use(express.static('public'));
 
-//mongoose.connect('mongodb://localhost/mydb');
-
-var personSchema = mongoose.Schema({
-	name 	: String,
-	age		: Number,
-	nationality	: String
+var insertDocument = function(db, cb){
+	db.collection('users').insertOne({
+		name		: myFullname,
+		email		: myEmail,
+		password	: myPassword
+	}, function(err, res){
+		assert.equal(err, null);
+		console.log('User added');
+		cb();
 	});
-var Person = mongoose.model("Person", personSchema);
+};
 
+app.post('/person', urlencodedParser ,function(req, res){
+	var post = req.body;
+	
+	myFullname	= post.fullname;
+	myEmail		= post.email;
+	myPassword	= post.password;
+	
+	console.log(myFullname +' '+ myEmail +' '+ myPassword);
+	
+	MongoClient.connect(url, function(err, db) {
+	  assert.equal(null, err);
+	  insertDocument(db, function() {
+		  db.close();
+	  });
+	});
+	
+});
 app.get('/', function(req, res){	
 	res.sendFile(__dirname+"/"+"index.html");
 });
 
-app.post('/',function(req, res){
-	
+app.get('/login.html', function(req, res){	
+	res.sendFile(__dirname+"/"+"login.html");
 });
-
 
 var server = app.listen(8000, function(){
 	var host = server.address().address;
