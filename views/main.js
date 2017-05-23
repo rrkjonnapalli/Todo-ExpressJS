@@ -112,11 +112,11 @@ app.get('/index', function(req, res){
 	res.sendFile(__dirname+'/'+'index.html');
 });
 
-app.get('/main.js', function(req, res){
-	res.sendFile(__dirname+'/'+'main.js');
+app.get('/scripts/jquery-1.10.2.js', function(req, res){
+	res.sendFile(__dirname+'/'+'scripts/jquery-1.10.2.js');
 });
-app.get('/a.js', function(req, res){
-	res.sendFile(__dirname+'/'+'a.js');
+app.get('/styles/w3.css', function(req, res){
+	res.sendFile(__dirname+'/'+'styles/w3.css');
 });
 
 app.get('/registerform', function(req, res){

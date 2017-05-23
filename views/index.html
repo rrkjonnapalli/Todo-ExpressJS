@@ -1,20 +1,13 @@
 <html>
 	<head>
-		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-		
-		<script>
-			var details=[];
-			$.getJSON( "/gettasks", function( json ) {
-			  deails = json;
-			  console.log( details );
-			});
-		</script>
+		<link rel="stylesheet" href="/styles/w3.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="/scripts/jquery-1.10.2.js"></script>
 	</head>
 	<body class="w3-container">
 			
 		
-		<div class="w3-padding-32" style="margin-left:10%;">		
+		<div class="w3-padding-32" style="margin-left:15%;">		
 			<a href="javascript:void(0)" class="w3-bar-item w3-button w3-blue w3-button w3-hover-black w3-left-align" onclick="document.getElementById('addtask').style.display='block'">Add new task <i class="w3-padding fa fa-pencil"></i></a>
 			<div id="addtask" class="w3-modal" style="z-index:4">
 			  <div class="w3-modal-content w3-animate-zoom">
@@ -51,14 +44,16 @@
 			</span>		
 			
 			<script>
+			/**/
 			$.getJSON( "/gettasks", function( details ) {
 				console.log(details);
 				var printStr = "";
 				for( i=0 ;i<details.length;i++){
-					printStr = printStr + "<br><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 name='show_title' id='show_title'>" +details[i].title+ "</h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div>";
+					printStr = printStr + "<br><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 name='show_title' id='show_title'>" +details[i].title+ "<i class='w3-right w3-xxlarge fa fa-trash'></i></h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div>";
 				}
 				document.getElementById("tasksList").innerHTML=printStr;
 			});
+			
 			</script>
 			
 			
@@ -68,7 +63,8 @@
 			<div class="w3-card-4" style="width:80%;">
 							
 				<header class="w3-container w3-blue">
-				  <h1 name="show_title" id="show_title">Title</h1>
+				  <h1 name="show_title" id="show_title">Title
+				  <i onclick="./login.html" class="w3-right w3-xxlarge fa fa-trash"></i></h1>
 				</header>
 				<div class="w3-container">
 				  <p name="show_description" id="show_description">Description</p>
@@ -78,8 +74,8 @@
 				  <h5 name="show_time" id="show_time">Time</h5>
 				</footer>
 			</div>
-			
 			-->
+			
 			
 		</div>
 	</body>
