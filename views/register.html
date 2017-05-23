@@ -9,10 +9,14 @@
 </head>
 <body>
 	<div>
-		<form action='/login' method="POST">
+		<form action='/register' method="POST">
 			<div class="w3-container w3-row w3-padding-32" style="margin-left:35%;">
 				<p>
-				  <label class="w3-text-blue"><b>Username</b>
+				  <label class="w3-text-blue"><b>First Name</b>
+				  <input class="w3-input w3-border" name="fullname" type="text" placeholder='Fullname' required></label>
+				</p>
+				<p>
+				  <label class="w3-text-blue"><b>Username/Email</b>
 				  <input class="w3-input w3-border" name="email" type="text" placeholder='Email' required></label>
 				</p>
 				<p>
@@ -20,10 +24,10 @@
 				  <input class="w3-input w3-border" name="password" type="password" placeholder='Password' required></label>
 				</p>
 				<div class="w3-center" style="width:50%">
-				<input class="w3-btn w3-blue w3-center" type='submit' value='Login'>
+				<input class="w3-btn w3-blue w3-center" type='submit' value='Register'>
 				</div>
 				<p style="w3-center">
-				  <a href="/registerform"><label class="w3-text-blue"><b>Not a member? Register Here</b>
+				  <a href="/loginform"><label class="w3-text-blue"><b>Already a member? Login Here</b>
 				</p>
 			</div>
 		</form>
