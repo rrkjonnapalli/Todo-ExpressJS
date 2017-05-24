@@ -5,113 +5,41 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({extended:false});
+
+var cookieParser = require('cookie-parser');
+var multer = require('multer');
+var session = require('express-session');
+var upload = multer();
+
+
 app.use(express.static('public'));
+
+app.use(upload.array());
+app.use(session({secret				:"It's my session",
+				resave 				: true,
+				saveUninitialized	: true,
+				secure				: true
+}));
 
 var url = 'mongodb://localhost:27017/mydb';
 var mydb;
-var username;
-var tasksObject;
 MongoClient.connect(url, function(err, db){
 	assert.equal(null, err);
-	console.log('Connected correctly to server');
 	mydb = db;
 });
 
-function gettasks(username){
-	mydb.collection("tasks").find({'user':username}).toArray(function(err, result) {  
-		if (err){
-			console.log(err);
-		}else{
-			//console.log(result);
-			tasksObject = result;
-			//res.send(result);
-			//res.redirect('/index');
-		};
-	});
-}
 
-
-function getMyDetails(err, res){
-	return tasksObject;
-}
-
-
-function register(response){
-	mydb.collection('users').insertOne(response, function(err, res){
-		if(err){
-			console.log(err);
-		}else{
-			console.log('User added');
-		}
-	});
-	return true;
-}
-function checkDuplicateAndRegister(response, res){
-	var myflag;
-	mydb.collection("users").find({username:response.username}).toArray(function(err, result) {  
-		if (err){
-			console.log(err);
-		}
-		if(result.length != 0){
-			res.send('username alredy exists');
-		}else{
-			var flag = register(response);
-			if(flag){
-				res.redirect('/loginform')
-			}else{
-				res.send('Sorry there is some internal error. please try after sometime');
-			}
-		};
-	});
-}
-
-function login(response, res){
-	mydb.collection("users").find({username:response.username, password:response.password}).toArray(function(err, result) {  
-		if (err){
-			console.log(err);
-		}else if(result.length == 0){
-			//console.log(result);
-			res.send('Invalid username or password');
-		}else{
-			res.redirect('/index');
-		};
-	});
-}
-
-function addtask(task, response){
-	
-	mydb.collection('tasks').insertOne(task, function(err, res){
-		if(err){
-			console.log(err);
-		}else{
-			console.log('Task added');
-			response.redirect('/index');
-		}
-	});
-	
-	/*
-	mydb.tasks.insertOne(task, function(err, res){
-		if(err){
-			return console.log(err);
-		}
-		console.log('task added');
-	});
-	*/
-}
 
 app.get('/', function(req, res){
 	res.redirect('/registerform');
 });
-
-app.get('/gettasks', function(req, res){
-	res.send(tasksObject);
-});
-
 app.get('/index', function(req, res){
-	gettasks(username);
-	res.sendFile(__dirname+'/'+'index.html');
+	if(req.session.user === undefined){
+		res.redirect('/');
+	}else{
+		res.sendFile(__dirname+'/'+'index.html');
+	}
 });
-
 app.get('/scripts/jquery-1.10.2.js', function(req, res){
 	res.sendFile(__dirname+'/'+'scripts/jquery-1.10.2.js');
 });
@@ -125,9 +53,16 @@ app.get('/registerform', function(req, res){
 app.get('/loginform', function(req, res){
 	res.sendFile(__dirname+'/'+'login.html');
 });
-app.get('/main.js', function(req, res){
-	res.sendFile(__dirname+'/'+'main.js');
+app.get('/gettasks', function(req, res){
+	mydb.collection("tasks").find({'user':req.session.user}).toArray(function(err, result) {  
+		if (err){
+			console.log(err);
+		}else{
+			res.send(result);
+		};
+	});
 });
+
 app.post('/register', urlencodedParser, function(req, res){
 	response = {
 		fullname	: req.body.fullname,
@@ -144,17 +79,97 @@ app.post('/login', urlencodedParser, function(req, res){
 		username	: req.body.email,
 		password	: req.body.password
 		};
-	login(response, res);
+	login(response, req, res);
 });
 
 app.post('/addtask', urlencodedParser, function(req, res){
 	task = {
-		user		: username,
+		user		: req.session.user,
 		title 		: req.body.title,
 		description	: req.body.description,
 		time		: req.body.time
 	}
 	addtask(task, res);
 });
+app.post('/removetask', urlencodedParser, function(req, res){
+	console.log(req.body);
+	/*
+	var query = {'_id' : req.body.id};
+	mydb.collection('tasks').remove(query, function(err, obj){
+		if(err){
+			console.log(err);
+		}else{
+			res.redirect('/index');
+		}
+	});
+	*/
+});
+app.get('/logout', function(req, res){
+    req.session.destroy();
+    res.redirect('/loginform');
+});
 
-app.listen(3000);
+
+
+function register(response){
+	mydb.collection('users').insertOne(response, function(err, res){
+		if(err){
+			console.log(err);
+		}else{
+			console.log('User added');
+		}
+	});
+	return true;
+}
+function checkDuplicateAndRegister(response, res){
+	var myflag;
+	mydb.collection("users").findOne({username:response.username}, function(err, result){
+		if (err){
+			console.log(err);
+		}else if(result != null){
+			res.send('username alredy exists');
+		}else{
+			var flag = register(response);
+			if(flag){
+				res.redirect('/loginform')
+			}else{
+				res.send('Sorry there is some internal error. please try after sometime');
+			}
+		}
+	});
+}
+
+function login(response, req, res){
+	mydb.collection("users").findOne({username:response.username, password:response.password}, function(err, result){
+		if (err){
+			console.log(err);
+		}else if(result === null){
+			res.send('Invalid username or password');
+		}else{
+			req.session.user = response.username;
+			res.redirect('/index');
+		};
+	});
+	
+}
+
+function addtask(task, response){
+	
+	mydb.collection('tasks').insertOne(task, function(err, res){
+		if(err){
+			console.log(err);
+		}else{
+			console.log('Task added');
+			response.redirect('/index');
+		}
+	});
+	
+}
+
+app.listen(3000, function(err, res){
+	if(err){
+		console.log(err);
+	}else{
+		console.log("Server running at 'http://localhost:3000'");
+	}
+});
