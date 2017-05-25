@@ -1,6 +1,7 @@
 
 var express = require('express');
 var app = express();
+var ObjectId = require('mongodb').ObjectID;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var bodyParser = require('body-parser');
@@ -48,10 +49,18 @@ app.get('/styles/w3.css', function(req, res){
 });
 
 app.get('/registerform', function(req, res){
-	res.sendFile(__dirname+'/'+'register.html');
+	if(req.session.user === undefined){
+		res.sendFile(__dirname+'/'+'register.html');
+	}else{
+		res.redirect('/index');
+	}
 });
 app.get('/loginform', function(req, res){
-	res.sendFile(__dirname+'/'+'login.html');
+	if(req.session.user === undefined){
+		res.sendFile(__dirname+'/'+'login.html');
+	}else{
+		res.redirect('/index');
+	}
 });
 app.get('/gettasks', function(req, res){
 	mydb.collection("tasks").find({'user':req.session.user}).toArray(function(err, result) {  
@@ -91,18 +100,17 @@ app.post('/addtask', urlencodedParser, function(req, res){
 	}
 	addtask(task, res);
 });
+
 app.post('/removetask', urlencodedParser, function(req, res){
-	console.log(req.body);
-	/*
-	var query = {'_id' : req.body.id};
-	mydb.collection('tasks').remove(query, function(err, obj){
+	var id = new ObjectId(req.body.id);
+	var query = {'_id' : id};
+	mydb.collection('tasks').removeOne(query, function(err, obj){
 		if(err){
 			console.log(err);
 		}else{
 			res.redirect('/index');
 		}
 	});
-	*/
 });
 app.get('/logout', function(req, res){
     req.session.destroy();
@@ -116,7 +124,7 @@ function register(response){
 		if(err){
 			console.log(err);
 		}else{
-			console.log('User added');
+			return true;
 		}
 	});
 	return true;
@@ -159,7 +167,6 @@ function addtask(task, response){
 		if(err){
 			console.log(err);
 		}else{
-			console.log('Task added');
 			response.redirect('/index');
 		}
 	});

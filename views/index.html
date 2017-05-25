@@ -1,11 +1,15 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="/styles/w3.css">
+		<meta charset="UTF-8">
+		<title>To-Do For Tom</title>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<script src="/scripts/jquery-1.10.2.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script>
-			function post(path, params, method) {
+			function post(params, method) {
+				var path = '/removetask';
 				method = method || "post"; // Set method to post by default if not specified.
 
 				// The rest of this code assumes you are not using a library.
@@ -83,14 +87,12 @@
 			
 			$.getJSON( "/gettasks", function( details ) {
 				console.log(details);
-				var path = '/removetask';
 				var printStr = "";
 				for( i=0 ;i<details.length;i++){
 					
-					
-					
-					printStr = printStr + "<br><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 name='show_title' id='show_title'>" +details[i].title+ "<i onclick='post("+path+",{id:"+details[i]['_id']+"})' class='w3-right w3-xxlarge fa fa-trash'></i></h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div>";
-					
+					//printStr = printStr + "<br><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 name='show_title' id='show_title'>" +details[i].title+ "<a href='/removetask/"+details[i]['_id']+"'><i class='w3-right w3-blue w3-xxlarge fa fa-trash'></i></a></h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div>";
+					printStr = printStr + "<br><form method='POST' action = '/removetask'><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 ondbclick='this.contentEditable=true' name='show_title' id='show_title'>" +details[i].title+ "<button type='submit' name='id' value='"+details[i]['_id']+"' style='border:0' class='w3-right w3-blue w3-xxlarge fa fa-trash'></button></h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div></form>";
+					//'<div class="w3-card-4" style="width:80%;"><header class="w3-container w3-blue"><h1 name="show_title" id="show_title">'+details[i].['title']+'<i onclick="/index" class="w3-right w3-xxlarge fa fa-trash"></i></h1></header><div class="w3-container"><p name="show_description" id="show_description">'+details[i].['description']+'</p></div><footer class="w3-container w3-blue"> <h5 name="show_time" id="show_time">'+details[i].['time']+'</h5>	</footer></div>'
 					
 				}
 				document.getElementById("tasksList").innerHTML=printStr;
@@ -117,28 +119,14 @@
 			printStr = printStr + "<br><div class='w3-card-4' style='width:80%;'> <header class='w3-container w3-blue'><h1 name='show_title' id='show_title'>" +details[i].title+ "<i class='w3-right w3-xxlarge fa fa-trash'></i></h1></header><div class='w3-container'> <p name='show_description' id='show_description'>"+ details[i].description+ "</p></div><footer class='w3-container w3-blue'><h5 name='show time' id='show_time'>"+ details[i].time+ "</h5></footer></div>";
 			
 			
-			
-			
-			
-			
-			
-			
-			<div class="w3-card-4" style="width:80%;">
-							
-				<header class="w3-container w3-blue">
-				  <h1 name="show_title" id="show_title">Title
-				  <i onclick="./login.html" class="w3-right w3-xxlarge fa fa-trash"></i></h1>
-				</header>
-				<div class="w3-container">
-				  <p name="show_description" id="show_description">Description</p>
-				</div>
-				
-				<footer class="w3-container w3-blue">
-				  <h5 name="show_time" id="show_time">Time</h5>
-				</footer>
-			</div>
-			
 			-->
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			
